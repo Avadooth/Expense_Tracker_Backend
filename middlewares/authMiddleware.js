@@ -9,16 +9,13 @@ const middleWare = async (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
-  console.log("Received Token:", token);
   if (!token)
     return res.status(401).json({ message: "No token, authorization denied" });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-    console.log("decoded---------->>>.", decoded);
     const user = await User.findById(decoded.id).select("-password").lean();
-    console.log("user---------->>>.", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
